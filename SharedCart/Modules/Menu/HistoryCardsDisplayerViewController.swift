@@ -8,16 +8,20 @@
 import UIKit
 import SnapKit
 
-class HistoryCardsDisplayerViewController: UIView {
+class HistoryCardsDisplayerViewController: UIViewController {
     
     private let collectionView: UICollectionView = {
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        return UICollectionView(frame: .zero, collectionViewLayout: layout)
+        
+        return UICollectionView(
+            frame: .zero,
+            collectionViewLayout: layout
+        )
     }()
      
     init() {
-        super.init(frame: .zero)
+        super.init(nibName: nil, bundle: nil)
         configureCollectionView()
     }
     
@@ -28,7 +32,7 @@ class HistoryCardsDisplayerViewController: UIView {
 
 extension HistoryCardsDisplayerViewController {
     private func configureCollectionView() {
-        addSubview(collectionView)
+        view.addSubview(collectionView)
         
         collectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -37,11 +41,16 @@ extension HistoryCardsDisplayerViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(CollectionCell<HistoryCardView>.self, forCellWithReuseIdentifier: "cell")
+        
+        collectionView.contentInset = .init(top: 0, left: 20, bottom: 0, right: 20)
     }
 }
 
 extension HistoryCardsDisplayerViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int
+    ) -> Int {
         return 10
     }
     
@@ -66,6 +75,8 @@ extension HistoryCardsDisplayerViewController: UICollectionViewDelegateFlowLayou
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        return .init(width: 300, height: 190)
+        return .init(width: 300, height: 200)
     }
+    
+    
 }

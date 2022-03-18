@@ -30,7 +30,7 @@ protocol ListViewDataSource: AnyObject {
 
     func listView(_ listView: ListView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath)
     
-    func listView(_ listView: ListView, cellInsetsforIndexPathAt: IndexPath) -> UIEdgeInsets
+    func listView(_ listView: ListView, cellInsetsAt indexPath: IndexPath) -> UIEdgeInsets
      
 }
 
@@ -56,7 +56,7 @@ extension ListViewDataSource {
 
     func listView(_ listView: ListView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {}
     
-    func listView(_ listView: ListView, cellInsetsforIndexPathAt: IndexPath) -> UIEdgeInsets {
+    func listView(_ listView: ListView, cellInsetsAt indexPath: IndexPath) -> UIEdgeInsets {
         return .init(top: 0, left: 0, bottom: 0, right: 0)
     }
 }
@@ -64,7 +64,7 @@ extension ListViewDataSource {
 class ListView: UITableView {
     
     private(set) var views: [UIView] = []
-
+ 
     weak var listDataSource: ListViewDataSource?
     
     init(
@@ -97,7 +97,7 @@ extension ListView: UITableViewDataSource, UITableViewDelegate {
             view: views[indexPath.section],
             edges: listDataSource?.listView(
                 self,
-                cellInsetsforIndexPathAt: indexPath
+                cellInsetsAt: indexPath
             ) ?? .init(top: 0, left: 0, bottom: 0, right: 0)
         )
         return cell

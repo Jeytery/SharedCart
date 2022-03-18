@@ -41,7 +41,7 @@ class MenuViewController: UIViewController {
     private lazy var views = [
         connectButton,
         createButton,
-        historyDisplayerVC,
+        historyDisplayerVC.view!,
         settingsButton
     ]
     
@@ -112,7 +112,14 @@ extension MenuViewController: UITableViewDelegate, ListViewDataSource {
         return footerTitles[section]
     }
     
-    func listView(_ listView: ListView, cellInsetsforIndexPathAt: IndexPath) -> UIEdgeInsets {
+    func listView(_ listView: ListView, cellInsetsAt indexPath: IndexPath) -> UIEdgeInsets {
+        if indexPath.section == 2 { return .init(top: 0, left: 0, bottom: 0, right: 0) }
+        
         return .init(top: 5, left: 20, bottom: -5, right: 20)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        let header = view as! UITableViewHeaderFooterView
+        header.textLabel?.font = .systemFont(ofSize: 15, weight: .semibold)
     }
 }
