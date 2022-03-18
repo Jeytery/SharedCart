@@ -12,8 +12,10 @@ class Colors {
     //MARK: - hardcoded app colors
     
     static let blue = UIColor(red: 0, green: 0, blue: 0, alpha: 0)
+
+    static let primary = Color(hex: "#41D1A6")
     
-    static let primary = Color(hex: "#10e6a5")
+    static let lightGray = Color(hex: "F5F5F5")
     
 }
 
@@ -30,25 +32,24 @@ extension Colors {
     }
     
     static func Color(hex: String) -> UIColor {
-        let r, g, b, a: CGFloat
+        var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
 
-        if hex.hasPrefix("#") {
-            let start = hex.index(hex.startIndex, offsetBy: 1)
-            let hexColor = String(hex[start...])
-
-            if hexColor.count == 8 {
-                let scanner = Scanner(string: hexColor)
-                var hexNumber: UInt64 = 0
-
-                if scanner.scanHexInt64(&hexNumber) {
-                    r = CGFloat((hexNumber & 0xff000000) >> 24) / 255
-                    g = CGFloat((hexNumber & 0x00ff0000) >> 16) / 255
-                    b = CGFloat((hexNumber & 0x0000ff00) >> 8) / 255
-                    a = CGFloat(hexNumber & 0x000000ff) / 255
-                    return UIColor(red: r, green: g, blue: b, alpha: a)
-                }
-            }
+        if (cString.hasPrefix("#")) {
+            cString.remove(at: cString.startIndex)
         }
-        return .white
+
+        if ((cString.count) != 6) {
+            return UIColor.gray
+        }
+
+        var rgbValue:UInt64 = 0
+        Scanner(string: cString).scanHexInt64(&rgbValue)
+
+        return UIColor(
+            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+            alpha: CGFloat(1.0)
+        )
     }
 }

@@ -5,8 +5,8 @@
 //  Created by Jeytery on 16.03.2022.
 //
 
-import Foundation
 import UIKit
+import SnapKit
 
 protocol ListViewDataSource: AnyObject {
     
@@ -27,10 +27,11 @@ protocol ListViewDataSource: AnyObject {
     func sectionIndexTitles(for tableView: UITableView) -> [String]?
 
     func listView(_ listView: ListView, sectionForSectionIndexTitle title: String, at index: Int) -> Int
-    
-    func listView(_ listView: ListView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath)
 
     func listView(_ listView: ListView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath)
+    
+    func listView(_ listView: ListView, cellInsetsforIndexPathAt: IndexPath) -> UIEdgeInsets
+     
 }
 
 extension ListViewDataSource {
@@ -52,10 +53,12 @@ extension ListViewDataSource {
     func sectionIndexTitles(for tableView: UITableView) -> [String]? { nil }
 
     func listView(_ listView: ListView, sectionForSectionIndexTitle title: String, at index: Int) -> Int { 0}
-    
-    func listView(_ listView: ListView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {}
 
     func listView(_ listView: ListView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {}
+    
+    func listView(_ listView: ListView, cellInsetsforIndexPathAt: IndexPath) -> UIEdgeInsets {
+        return .init(top: 0, left: 0, bottom: 0, right: 0)
+    }
 }
 
 class ListView: UITableView {
@@ -71,6 +74,7 @@ class ListView: UITableView {
         self.views = views
         super.init(frame: .zero, style: .grouped)
         separatorStyle = .none
+        allowsSelection = false
         super.dataSource = self
     }
     
@@ -91,7 +95,10 @@ extension ListView: UITableViewDataSource, UITableViewDelegate {
     ) -> UITableViewCell {
         let cell = ListTableCell<UIView>(
             view: views[indexPath.section],
-            edges: UIEdgeInsets(top: 0, left: 10, bottom: 10, right: 10)
+            edges: listDataSource?.listView(
+                self,
+                cellInsetsforIndexPathAt: indexPath
+            ) ?? .init(top: 0, left: 0, bottom: 0, right: 0)
         )
         return cell
     }
@@ -123,11 +130,7 @@ extension ListView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
         return listDataSource?.listView(self, sectionForSectionIndexTitle: title, at: index) ?? 0
     }
-    
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        listDataSource?.listView(self, commit: editingStyle, forRowAt: indexPath)
-    }
-    
+
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         listDataSource?.listView(self, moveRowAt: sourceIndexPath, to: destinationIndexPath)
     }
@@ -162,22 +165,18 @@ fileprivate class ListTableCell<T: UIView>: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    func setView(_ _view: T) {
+
+    func setView(
+        _ view: T,
+        edges: UIEdgeInsets = .init(top: 0, left: 0, bottom: 0, right: 0)
+    ) {
         contentView.addSubview(baseView)
-        baseView.translatesAutoresizingMaskIntoConstraints = false
-        baseView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        baseView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        baseView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
-        baseView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
-    }
-    
-    func setView(_ _view: T, edges: UIEdgeInsets) {
-        contentView.addSubview(baseView)
-        baseView.translatesAutoresizingMaskIntoConstraints = false
-        baseView.topAnchor.constraint(equalTo: topAnchor, constant: edges.top).isActive = true
-        baseView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -edges.bottom).isActive = true
-        baseView.leftAnchor.constraint(equalTo: leftAnchor, constant: edges.left).isActive = true
-        baseView.rightAnchor.constraint(equalTo: rightAnchor, constant: -edges.right).isActive = true
+        
+        view.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(edges.top)
+            make.left.equalToSuperview().offset(edges.left)
+            make.right.equalToSuperview().offset(-edges.right)
+            make.bottom.equalToSuperview().offset(edges.bottom)
+        }
     }
 }
