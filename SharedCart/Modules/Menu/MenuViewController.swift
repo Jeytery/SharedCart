@@ -82,6 +82,7 @@ extension MenuViewController {
         createButton.setActiveStyle(icon: Icons.plus, title: "Create", scale: 3.3)
         
         createButton.didTap = {
+            self.showCreateRoomAlert()
             print("create")
         }
     }
@@ -121,5 +122,44 @@ extension MenuViewController: UITableViewDelegate, ListViewDataSource {
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header = view as! UITableViewHeaderFooterView
         header.textLabel?.font = .systemFont(ofSize: 15, weight: .semibold)
+    }
+}
+
+extension MenuViewController {
+    private func showConnectAlert() {
+        
+    }
+    
+    private func showCreateRoomAlert() {
+        let alert = UIAlertController(
+            title: "Enter room data",
+            message: nil,
+            preferredStyle: .alert
+        )
+        
+        alert.addTextField {
+            textField in
+            textField.placeholder = "Enter your name"
+        }
+        
+        let createAction = UIAlertAction(title: "Create", style: .default, handler: {
+            [unowned self] _ in
+            let ownerName = alert.textFields?[0].text ?? "Unammed user"
+            createRoomAlertAction(ownerName: ownerName)
+        })
+        
+        alert.addAction(UIAlertAction(title: "Close", style: .cancel, handler: nil))
+        alert.addAction(createAction)
+        
+        present(alert, animated: false, completion: nil)
+    }
+    
+    private func createRoomAlertAction(ownerName: String) {
+        let roomVC = RoomViewController()
+        let nc = NavigationController(rootViewController: roomVC)
+        nc.navigationBar.prefersLargeTitles = true
+        nc.modalPresentationStyle = .overFullScreen
+        
+        present(nc, animated: true, completion: nil)
     }
 }

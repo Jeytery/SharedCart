@@ -13,9 +13,11 @@ class Colors {
     
     static let blue = UIColor(red: 0, green: 0, blue: 0, alpha: 0)
 
-    static let primary = Color(hex: "#41D1A6")
+    static let primary = Color(hex: "#4EE0B4")
     
     static let lightGray = Color(hex: "F5F5F5")
+    
+    static let background = UIColor.white
     
 }
 

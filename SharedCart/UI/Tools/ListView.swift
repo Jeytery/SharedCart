@@ -151,15 +151,10 @@ fileprivate class ListTableCell<T: UIView>: UITableViewCell {
         style: UITableViewCell.CellStyle = .default,
         reuseIdentifier: String? = nil
     ) {
-        print("TableCell.init")
         self.baseView = view
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setView(baseView, edges: edges)
         backgroundColor = .clear
-    }
-    
-    deinit {
-        print("TableCell.deinit")
     }
     
     required init?(coder: NSCoder) {
@@ -171,12 +166,19 @@ fileprivate class ListTableCell<T: UIView>: UITableViewCell {
         edges: UIEdgeInsets = .init(top: 0, left: 0, bottom: 0, right: 0)
     ) {
         contentView.addSubview(baseView)
+    
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.topAnchor.constraint(equalTo: contentView.topAnchor, constant: edges.top).isActive = true
+        view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -edges.bottom).isActive = true
+        view.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: edges.left).isActive = true
+        view.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -edges.right).isActive = true
+
         
-        view.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(edges.top)
-            make.left.equalToSuperview().offset(edges.left)
-            make.right.equalToSuperview().offset(-edges.right)
-            make.bottom.equalToSuperview().offset(edges.bottom)
-        }
+        //        view.snp.makeConstraints { make in
+//            make.top.equalToSuperview().offset(edges.top)
+//            make.left.equalToSuperview().offset(edges.left)
+//            make.right.equalToSuperview().offset(-edges.right)
+//            make.bottom.equalToSuperview().offset(edges.bottom)
+//        }
     }
 }

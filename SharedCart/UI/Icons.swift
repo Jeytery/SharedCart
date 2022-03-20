@@ -19,4 +19,6 @@ class Icons {
     static let connect = Icon("connect")
     static let plus = Icon("plus")
     static let settings = Icon("settings")
+    
+    static let close = Icon("close")
 }

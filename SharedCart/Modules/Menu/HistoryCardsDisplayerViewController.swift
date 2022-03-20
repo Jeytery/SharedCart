@@ -10,16 +10,8 @@ import SnapKit
 
 class HistoryCardsDisplayerViewController: UIViewController {
     
-    private let collectionView: UICollectionView = {
-        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        
-        return UICollectionView(
-            frame: .zero,
-            collectionViewLayout: layout
-        )
-    }()
-     
+    private let collectionView = CollectionView()
+
     init() {
         super.init(nibName: nil, bundle: nil)
         configureCollectionView()
@@ -77,6 +69,4 @@ extension HistoryCardsDisplayerViewController: UICollectionViewDelegateFlowLayou
     ) -> CGSize {
         return .init(width: 300, height: 200)
     }
-    
-    
 }
