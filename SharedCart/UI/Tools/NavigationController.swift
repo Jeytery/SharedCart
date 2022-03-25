@@ -26,6 +26,7 @@ class NavigationController: UINavigationController {
         super.init(rootViewController: rootViewController)
         configureCloseButton(side: buttonSide)
         navigationBar.prefersLargeTitles = true
+        navigationBar.tintColor = Colors.primary
     }
 
     required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }

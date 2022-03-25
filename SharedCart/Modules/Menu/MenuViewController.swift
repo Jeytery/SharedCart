@@ -12,7 +12,7 @@ class MenuViewController: UIViewController {
   
     private var list: ListView!
     private let connectButton =  Button()
-    private let createButton =   Button()
+    private let createButton =   UIButton()
     private let settingsButton = Button()
     
     private let historyDisplayerVC = HistoryCardsDisplayerViewController()
@@ -31,11 +31,13 @@ class MenuViewController: UIViewController {
         "version 0.1"
     ]
     
-    private let contentHeights: [CGFloat] = [
-        70,
-        70,
+    private let buttonSize: CGFloat = 60
+    
+    private lazy var contentHeights: [CGFloat] = [
+        buttonSize,
+        buttonSize,
         200,
-        70
+        buttonSize
     ]
     
     private lazy var views = [
@@ -78,17 +80,34 @@ extension MenuViewController {
         list.backgroundColor = .white
     }
     
-    private func configureCreateButton() {
-        createButton.setActiveStyle(icon: Icons.plus, title: "Create", scale: 3.3)
+    @objc func createButtonDidTap() {
+        let alert = UIAlertController(title: "Enter room data", message: nil, preferredStyle: .alert)
         
-        createButton.didTap = {
-            self.showCreateRoomAlert()
-            print("create")
+        alert.addTextField {
+            $0.placeholder = "Enter your name"
         }
+        
+        let createAction = UIAlertAction(title: "Create", style: .default) {
+            [unowned self] _ in
+            let ownerName = alert.textFields?[0].text ?? "Unammed user"
+            createRoomAlertAction(ownerName: ownerName)
+        }
+        
+        alert.addAction(createAction)
+        
+        
+        alert.addAction(UIAlertAction(title: "close", style: .cancel) { _ in })
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    private func configureCreateButton() {
+        createButton.setActiveStyle(icon: Icons.plus, title: "Create")
+        createButton.addTarget(self, action: #selector(createButtonDidTap), for: .touchUpInside)
     }
     
     private func configureConnectButton() {
-        connectButton.setActiveStyle(icon: Icons.connect, title: "Connect")
+        connectButton.setActiveStyle(icon: Icons.connect, title: "Connect", imageSize: 30)
         
         connectButton.didTap = {
             print("connect")
@@ -96,7 +115,7 @@ extension MenuViewController {
     }
     
     private func configureSettigsButton() {
-        settingsButton.setActiveStyle(icon: Icons.settings, title: "Settings", scale: 2.5)
+        settingsButton.setActiveStyle(icon: Icons.settings, title: "Settings")
     }
 }
 
@@ -104,21 +123,21 @@ extension MenuViewController: UITableViewDelegate, ListViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return contentHeights[indexPath.section]
     }
-    
+
     func listView(_ listView: ListView, titleForHeaderInSection section: Int) -> String? {
         return headerTitles[section]
     }
-    
+
     func listView(_ listView: ListView, titleForFooterInSection section: Int) -> String? {
         return footerTitles[section]
     }
-    
+
     func listView(_ listView: ListView, cellInsetsAt indexPath: IndexPath) -> UIEdgeInsets {
         if indexPath.section == 2 { return .init(top: 0, left: 0, bottom: 0, right: 0) }
-        
+
         return .init(top: 5, left: 20, bottom: -5, right: 20)
     }
-    
+
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header = view as! UITableViewHeaderFooterView
         header.textLabel?.font = .systemFont(ofSize: 15, weight: .semibold)

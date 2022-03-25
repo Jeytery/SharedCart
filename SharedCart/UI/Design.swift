@@ -11,7 +11,7 @@ import SnapKit
 
 //MARK: - UIButton
 extension UIButton {
-    func setActiveStyle(icon: UIImage, title: String, scale: CGFloat = 2.3) {
+    func _setActiveStyle(icon: UIImage, title: String, scale: CGFloat = 2.3) {
         backgroundColor = Colors.lightGray
         
         let stackView = UIStackView()
@@ -43,6 +43,37 @@ extension UIButton {
         tintColor = Colors.primary
         label.textColor = Colors.primary
         label.font = .systemFont(ofSize: 18, weight: .semibold)
+        layer.cornerRadius = DesignProperties.cornerRadius
+    }
+    
+    
+    func setActiveStyle(icon: UIImage, title: String, imageSize: CGFloat = 25) {
+        let label = UILabel()
+        let imageView = UIImageView()
+            
+        addSubview(label)
+        addSubview(imageView)
+    
+        label.text = title
+        label.textColor = Colors.primary
+        label.font = .systemFont(ofSize: 18, weight: .semibold)
+        
+        label.snp.makeConstraints {
+            $0.centerX.equalToSuperview().offset(imageSize)
+            $0.centerY.equalToSuperview()
+        }
+        
+        imageView.image = icon
+        imageView.contentMode = .scaleAspectFit
+        
+        imageView.snp.makeConstraints {
+            $0.right.equalTo(label.snp.left).offset(-7)
+            $0.width.height.equalTo(imageSize)
+            $0.centerY.equalToSuperview()
+        }
+        
+        tintColor = Colors.primary
+        backgroundColor = Colors.lightGray
         layer.cornerRadius = DesignProperties.cornerRadius
     }
 }

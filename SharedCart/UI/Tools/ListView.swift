@@ -31,7 +31,8 @@ protocol ListViewDataSource: AnyObject {
     func listView(_ listView: ListView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath)
     
     func listView(_ listView: ListView, cellInsetsAt indexPath: IndexPath) -> UIEdgeInsets
-     
+    
+    func listView(_ listView: ListView, didCreate cell: UITableViewCell, at indexPath: IndexPath)
 }
 
 extension ListViewDataSource {
@@ -59,20 +60,36 @@ extension ListViewDataSource {
     func listView(_ listView: ListView, cellInsetsAt indexPath: IndexPath) -> UIEdgeInsets {
         return .init(top: 0, left: 0, bottom: 0, right: 0)
     }
+    
+    func listView(_ listView: ListView, didCreate cell: UITableViewCell, at indexPath: IndexPath) {}
 }
 
 class ListView: UITableView {
     
+    enum Style {
+        case insetGrouped
+        case clear
+    }
+    
     private(set) var views: [UIView] = []
+    private let listStyle: Style
  
     weak var listDataSource: ListViewDataSource?
     
     init(
         views: [UIView],
-        frame: CGRect = .zero
+        frame: CGRect = .zero,
+        style: Style = .clear
     ) {
         self.views = views
-        super.init(frame: .zero, style: .grouped)
+        self.listStyle = style
+        
+        if #available(iOS 13.0, *), style == .insetGrouped {
+            super.init(frame: .zero, style: .insetGrouped)
+        } else {
+            super.init(frame: .zero, style: .grouped)
+        }
+        
         separatorStyle = .none
         allowsSelection = false
         super.dataSource = self
@@ -100,6 +117,10 @@ extension ListView: UITableViewDataSource, UITableViewDelegate {
                 cellInsetsAt: indexPath
             ) ?? .init(top: 0, left: 0, bottom: 0, right: 0)
         )
+        
+        if listStyle == .clear { cell.backgroundColor = .clear }
+        
+        listDataSource?.listView(self, didCreate: cell, at: indexPath)
         return cell
     }
     
@@ -154,7 +175,6 @@ fileprivate class ListTableCell<T: UIView>: UITableViewCell {
         self.baseView = view
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setView(baseView, edges: edges)
-        backgroundColor = .clear
     }
     
     required init?(coder: NSCoder) {
@@ -162,23 +182,15 @@ fileprivate class ListTableCell<T: UIView>: UITableViewCell {
     }
 
     func setView(
-        _ view: T,
+        _ _view: T,
         edges: UIEdgeInsets = .init(top: 0, left: 0, bottom: 0, right: 0)
     ) {
         contentView.addSubview(baseView)
     
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.topAnchor.constraint(equalTo: contentView.topAnchor, constant: edges.top).isActive = true
-        view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -edges.bottom).isActive = true
-        view.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: edges.left).isActive = true
-        view.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -edges.right).isActive = true
-
-        
-        //        view.snp.makeConstraints { make in
-//            make.top.equalToSuperview().offset(edges.top)
-//            make.left.equalToSuperview().offset(edges.left)
-//            make.right.equalToSuperview().offset(-edges.right)
-//            make.bottom.equalToSuperview().offset(edges.bottom)
-//        }
+        _view.translatesAutoresizingMaskIntoConstraints = false
+        _view.topAnchor.constraint(equalTo: contentView.topAnchor, constant: edges.top).isActive = true
+        _view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -edges.bottom).isActive = true
+        _view.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: edges.left).isActive = true
+        _view.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -edges.right).isActive = true
     }
 }

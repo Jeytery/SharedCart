@@ -14,6 +14,7 @@ class Button: UIButton {
     init() {
         super.init(frame: .zero)
         addTarget(self, action: #selector(didTapAction), for: .touchUpInside)
+        isUserInteractionEnabled = true
     }
     
     required init?(coder: NSCoder) {

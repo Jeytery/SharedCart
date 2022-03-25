@@ -50,13 +50,18 @@ extension RoomViewController {
     private func configureAddProductButton() {
         view.addSubview(addProductButton)
         
-        addProductButton.setActiveStyle(icon: Icons.plus, title: "Add product", scale: 3)
+        addProductButton.setActiveStyle(icon: Icons.plus, title: "Add product")
         
         addProductButton.snp.makeConstraints {
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
             $0.height.equalTo(60)
             $0.width.equalTo(190)
             $0.centerX.equalToSuperview()
+        }
+        
+        addProductButton.didTap = {
+            let addProductVC = AddProductViewController()
+            self.navigationController?.pushViewController(addProductVC, animated: true)
         }
         
         addProductButton.backgroundColor = .white

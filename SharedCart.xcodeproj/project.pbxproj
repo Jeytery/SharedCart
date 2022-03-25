@@ -37,6 +37,7 @@
 		3ED5CD9D27E738FB00DA36D0 /* EntitesBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ED5CD9C27E738FB00DA36D0 /* EntitesBoardView.swift */; };
 		3ED5CD9F27E73B7D00DA36D0 /* CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ED5CD9E27E73B7D00DA36D0 /* CollectionView.swift */; };
 		3ED5CDA127E7879300DA36D0 /* AddProductViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ED5CDA027E7879300DA36D0 /* AddProductViewController.swift */; };
+		3ED5CDA427E799CE00DA36D0 /* Stepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ED5CDA327E799CE00DA36D0 /* Stepper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -70,6 +71,7 @@
 		3ED5CD9C27E738FB00DA36D0 /* EntitesBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitesBoardView.swift; sourceTree = "<group>"; };
 		3ED5CD9E27E73B7D00DA36D0 /* CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionView.swift; sourceTree = "<group>"; };
 		3ED5CDA027E7879300DA36D0 /* AddProductViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddProductViewController.swift; sourceTree = "<group>"; };
+		3ED5CDA327E799CE00DA36D0 /* Stepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stepper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -197,6 +199,7 @@
 				3E92D2EC27E4B99400480655 /* HistoryCardView.swift */,
 				3ED5CD9A27E7378100DA36D0 /* DetailedEntityView.swift */,
 				3ED5CD9C27E738FB00DA36D0 /* EntitesBoardView.swift */,
+				3ED5CDA327E799CE00DA36D0 /* Stepper.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -311,6 +314,7 @@
 				3E92D2F227E4BAAE00480655 /* TableCell.swift in Sources */,
 				3E92D2ED27E4B99400480655 /* HistoryCardView.swift in Sources */,
 				3E92D2D327E4866700480655 /* TextField.swift in Sources */,
+				3ED5CDA427E799CE00DA36D0 /* Stepper.swift in Sources */,
 				3ED5CD9927E678A800DA36D0 /* Luma.swift in Sources */,
 				3E92D2F027E4BAA700480655 /* CollectionCell.swift in Sources */,
 			);
