@@ -30,6 +30,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
         FirebaseApp.configure()
         
+        createRoom(with: nil, completion: {_ in })
+        
         return true
     }
 

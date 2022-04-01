@@ -16,6 +16,7 @@ class DetailedProductView: UIView {
     
     init() {
         super.init(frame: .zero)
+        configurePriceLabel()
         configureStackView()
     }
     
@@ -29,7 +30,7 @@ extension DetailedProductView {
         let stackView = UIStackView()
         addSubview(stackView)
         stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fill
         
         stackView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
@@ -37,26 +38,24 @@ extension DetailedProductView {
         }
         
         stackView.spacing = 10
-
+        stackView.addArrangedSubview(userNameView)
+        stackView.addArrangedSubview(nameLabel)
+       
         userNameView.snp.makeConstraints {
             $0.width.equalTo(45)
             $0.height.equalTo(25)
-            
         }
         
         userNameView.layer.cornerRadius = 4
-        
-        stackView.addArrangedSubview(userNameView)
-        stackView.addArrangedSubview(nameLabel)
-        nameLabel.text = "Milk"
         nameLabel.font = .systemFont(ofSize: 19, weight: .medium)
-        
+    }
+    
+    private func configurePriceLabel() {
         addSubview(priceLabel)
         priceLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.right.equalToSuperview().offset(-20)
         }
-        
         priceLabel.font = .systemFont(ofSize: 19, weight: .medium)
     }
     
@@ -65,5 +64,12 @@ extension DetailedProductView {
         priceLabel.text = price
         
         userNameView.setUser(color: Colors.primary, name: "Jeytery")
+    }
+    
+    func setData(product: Product, enitity: Entity) {
+        nameLabel.text = product.name
+        priceLabel.text = String(product.price) + " UAH"
+        
+        userNameView.setUser(color: enitity.color.uiColor, name: enitity.name)
     }
 }

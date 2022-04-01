@@ -14,19 +14,23 @@ protocol AddProductViewControllerDelegate: AnyObject {
 class AddProductViewController: UIViewController {
     
     weak var delegate: AddProductViewControllerDelegate?
+
+    private var productPrice: Double {
+        let price = Double(priceTextField.text ?? "0") ?? 0.0
+        return stepper.value * price
+    }
     
+    // ui
     private var listView: ListView!
-    
     private let nameTextField =  TextField(insests: .init(top: 0, left: 20, bottom: 0, right: 0))
     private let priceTextField = TextField(insests: .init(top: 0, left: 20, bottom: 0, right: 0))
-    
     private let countView = UIView()
     private let confirmButton = Button()
     private let countLabel = UILabel()
-    private let stepper = Stepper()
+    private let stepper = UIStepper()
+    private let entitiesBoardView = EntitiesBoardView()
     
-    private let entitiesBoardView = EntitesBoardView()
-    
+    // list setup
     private lazy var views: [UIView] = [
         nameTextField,
         priceTextField,
@@ -34,46 +38,67 @@ class AddProductViewController: UIViewController {
         entitiesBoardView,
         confirmButton
     ]
-    
     private let headerTitle: [String?] = [
-        "Enter name",
-        "Enter price",
-        "Enter count",
+        "Enter data",
         nil,
+        nil,
+        "Whose product is?",
         nil
     ]
     
-    init(product: Product? = nil) {
+    init(product: Product? = nil, entities: Entities = []) {
         super.init(nibName: nil, bundle: nil)
+       
+        configureVC()
         
+        configureList()
+        configureStepper()
+        configureConfirmButton()
+        conigureEntitiesBoardView(entities)
+        conifgurePriceTextField()
+        
+        configureNotification()
+    }
+    
+    required init?(coder: NSCoder) { fatalError() }
+    deinit { NotificationCenter.default.removeObserver(self) }
+}
+
+//MARK: - ui
+extension AddProductViewController {
+    private func configureVC() {
         nameTextField.placeholder = "Enter name"
         priceTextField.placeholder = "Enter price"
         priceTextField.keyboardType = .numberPad
-        
         title = "New Product"
+    }
+    
+    private func conigureEntitiesBoardView(_ entities: Entities) {
+        entitiesBoardView.didSelect = { index in
+            self.entitiesBoardView.select(at: index)
+            self.entitiesBoardView.setPriceForSelected(self.productPrice)
+        }
+        
+        entitiesBoardView.add(entities: entities)
+        entitiesBoardView.select(at: 0)
+    }
+    
+    private func configureConfirmButton() {
+        confirmButton.didTap = {
+            [unowned self] in
+            guard let entity = entitiesBoardView.selectedEntity else { return }
+            let product = Product(
+                name: nameTextField.text ?? "Unnamed product",
+                price: productPrice,
+                entityId: entity.id
+            )
+            delegate?.addProductViewController(self, didCreate: product)
+        }
         
         confirmButton.setActiveStyle(icon: Icons.plus, title: "Add")
         confirmButton.backgroundColor = .clear
-        
-        configureList()
-        configureNotification()
-        
-        entitiesBoardView.didSelect = {
-            index in
-            self.entitiesBoardView.select(at: index)
-        }
     }
     
-    required init?(coder: NSCoder) {
-        fatalError()
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-}
-
-extension AddProductViewController {
     private func configureList() {
         listView = ListView(views: views, style: .insetGrouped)
         
@@ -87,6 +112,17 @@ extension AddProductViewController {
         listView.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
     }
     
+    private func conifgurePriceTextField() {
+        priceTextField.addTarget(self, action: #selector(priceTextFieldValueDidChanged), for: .editingChanged)
+    }
+    
+    @objc func priceTextFieldValueDidChanged() {
+        entitiesBoardView.setPriceForSelected(productPrice)
+    }
+}
+
+//MARK: - stepper
+extension AddProductViewController {
     private func StepperView() -> UIView {
         let _view = UIView()
         
@@ -105,11 +141,26 @@ extension AddProductViewController {
             $0.width.equalTo(100)
         }
         
-        countLabel.text = "Product count"
+        countLabel.text = "Product count: 1"
         
         return _view
     }
     
+    private func configureStepper() {
+        stepper.addTarget(self, action: #selector(stepperValueDidChange), for: .valueChanged)
+        stepper.maximumValue = 99
+        stepper.minimumValue = 1
+        stepper.value = 1
+    }
+    
+    @objc func stepperValueDidChange() {
+        countLabel.text = "Product count: \(Int(stepper.value))"
+        entitiesBoardView.setPriceForSelected(productPrice)
+    }
+}
+
+//MARK: - keyboard events
+extension AddProductViewController {
     private func configureNotification() {
         NotificationCenter.default.addObserver(
             self,
@@ -136,6 +187,7 @@ extension AddProductViewController {
     }
 }
 
+//MARK: - [d] list
 extension AddProductViewController: ListViewDataSource, UITableViewDelegate {
     func tableView(
         _ tableView: UITableView,
@@ -152,7 +204,20 @@ extension AddProductViewController: ListViewDataSource, UITableViewDelegate {
         return headerTitle[section]
     }
     
-    func listView(_ listView: ListView, didCreate cell: UITableViewCell, at indexPath: IndexPath) {
+    func listView(
+        _ listView: ListView,
+        didCreate cell: UITableViewCell,
+        at indexPath: IndexPath
+    ) {
         if indexPath.section == 3 { cell.backgroundColor = .clear }
+    }
+    
+    func tableView(
+        _ tableView: UITableView,
+        willDisplayHeaderView view: UIView,
+        forSection section: Int
+    ) {
+        let headerView = view as? UITableViewHeaderFooterView
+        headerView?.textLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
     }
 }

@@ -44,7 +44,7 @@ extension Colors {
             return UIColor.gray
         }
 
-        var rgbValue:UInt64 = 0
+        var rgbValue: UInt64 = 0
         Scanner(string: cString).scanHexInt64(&rgbValue)
 
         return UIColor(
@@ -52,6 +52,41 @@ extension Colors {
             green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
             blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
             alpha: CGFloat(1.0)
+        )
+    }
+}
+
+
+
+// MARK: - codable color
+// can be saved in device storage
+struct CodableColor: Codable {
+    let red: CGFloat
+    let blue: CGFloat
+    let green: CGFloat
+    
+    init(red: CGFloat, green: CGFloat, blue: CGFloat) {
+        self.red = red
+        self.green = green
+        self.blue = blue
+    }
+    
+    var uiColor: UIColor {
+        return UIColor(
+            red: red,
+            green: green,
+            blue: blue,
+            alpha: 1
+        )
+    }
+}
+
+extension UIColor {
+    var codableColor: CodableColor {
+        return CodableColor(
+            red: CIColor(color:   self).red,
+            green: CIColor(color: self).green,
+            blue: CIColor(color:  self).blue
         )
     }
 }

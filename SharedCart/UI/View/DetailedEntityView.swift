@@ -29,11 +29,11 @@ class DetailedEntityView: UIView {
     
     required init?(coder: NSCoder) { fatalError() }
     
-    func setEntity(color: UIColor, user: User, products: Products) {
-        priceLabel.text = "234 UAH"
+    func setEntity(_ entity: Entity) {
+        priceLabel.text = String(entity.sum) + " UAH"
         
-        nameLabel.text = user.name
-        userNameView.setUser(color: color, name: user.name)
+        nameLabel.text = entity.name
+        userNameView.setUser(color: entity.color.uiColor, name: entity.name)
     }
 }
 

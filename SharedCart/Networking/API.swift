@@ -5,16 +5,29 @@
 //  Created by Jeytery on 19.03.2022.
 //
 
-import FirebaseDatabase
+import FirebaseFirestore
 
-// static class just for namespace
-class API {
+typealias ResultCompletion<ReturType, ErrorType: Error> = (Result<ReturType, ErrorType>) -> Void
+typealias VoidCompletion<ErrorType: Error> = (ErrorType?) -> Void
+
+fileprivate let database = Firestore.firestore()
+
+func getRoom(by id: String, completion: ResultCompletion<Room, Error>) {}
+
+func createRoom(with owner: Entity?, completion: VoidCompletion<Error>) {
+    //database.document(<#T##documentPath: String##String#>)
+    let ref = database.document("example/example")
+    ref.setData(["example": "jeytery"])
     
-    static func addRoom() {
-        
-    }
-    
-    static func removeRoom() {
-        
-    }
 }
+
+func removeRoom(with id: String) {}
+
+func addProduct() {}
+func removeProduct() {}
+
+func addEntity() {}
+func removeEntity() {}
+
+func updateRoom() {}
+

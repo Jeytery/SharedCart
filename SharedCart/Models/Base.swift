@@ -6,24 +6,29 @@
 //
 
 import Foundation
+import UIKit
 
 struct Product: Codable {
     let name: String
     let price: Double
-    let userId: String
+    let entityId: String
 }
 typealias Products = [Product]
 
-struct User: Codable {
-    let name: String
-    var id: String
-}
-typealias Users = [User]
-
 struct Room: Codable {
     let id: String
-    let users: Users
+    
     let date: Date
+    
+    let entities: Entities
     var products: Products
 }
 typealias Rooms = [Room]
+
+struct Entity: Codable {
+    let name: String
+    var sum: Double
+    let color: CodableColor
+    var id: String = UUID().uuidString
+}
+typealias Entities = [Entity]

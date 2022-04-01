@@ -7,15 +7,53 @@
 
 import UIKit
 import SnapKit
+import SwiftUI
+
+class EntitySelector {
+    
+    private var entities: Entities
+    
+    init(entities: Entities) {
+        self.entities = entities
+    }
+    
+    private func entityIndex(by id: String) -> Int? {
+        for i in 0 ..< entities.count {
+            if entities[i].id == id { return i }
+        }
+        return nil
+    }
+    
+    func addEntity(_ entity: Entity) {
+        
+    }
+    
+    func removeEntity(at index: Int) {
+        
+    }
+}
 
 class RoomViewController: UIViewController {
     
+    // ui
     private let tableView = TableView()
-    
     private let addProductButton = Button()
+    private lazy var board = EntitiesBoardView(entities: entities)
     
+    // const
     private let headerHeight: CGFloat = 200
-    private let cellHeight: CGFloat = 120
+    private let cellHeight: CGFloat = 80
+    
+    // state
+    private var products: Products = []
+    
+    private lazy var entitiesCenter = EntitiesCenter(entities: entities)
+    
+    private var entities: Entities = [
+        .init(name: "Jeytery", sum: 123, color: Colors.primary.codableColor),
+        .init(name: "Andry", sum: 45, color: UIColor.red.codableColor),
+        .init(name: "BloodRedTape", sum: 234, color: UIColor.cyan.codableColor)
+    ]
     
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -60,8 +98,10 @@ extension RoomViewController {
         }
         
         addProductButton.didTap = {
-            let addProductVC = AddProductViewController()
-            self.navigationController?.pushViewController(addProductVC, animated: true)
+            [unowned self] in 
+            let addProductVC = AddProductViewController(product: nil, entities: entities)
+            addProductVC.delegate = self
+            navigationController?.pushViewController(addProductVC, animated: true)
         }
         
         addProductButton.backgroundColor = .white
@@ -75,7 +115,7 @@ extension RoomViewController {
 
 extension RoomViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return products.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -84,7 +124,11 @@ extension RoomViewController: UITableViewDelegate, UITableViewDataSource {
             for: indexPath
         ) as! TableCell<DetailedProductView>
         
-        cell.baseView.setProduct(name: "Milk", price: "35 UAH")
+        let product = products[indexPath.row]
+        
+        if let entity = entity(by: product.entityId) {
+            cell.baseView.setData(product: product, enitity: entity)
+        }
         
         return cell
     }
@@ -100,7 +144,7 @@ extension RoomViewController: UITableViewDelegate, UITableViewDataSource {
         _ tableView: UITableView,
         viewForHeaderInSection section: Int
     ) -> UIView? {
-        return EntitesBoardView()
+        return board
     }
     
     func tableView(
@@ -108,5 +152,34 @@ extension RoomViewController: UITableViewDelegate, UITableViewDataSource {
         heightForHeaderInSection section: Int
     ) -> CGFloat {
         return headerHeight
+    }
+}
+
+extension RoomViewController: AddProductViewControllerDelegate {
+    private func entityIndex(by id: String) -> Int? {
+        for i in 0 ..< entities.count {
+            if entities[i].id == id { return i }
+        }
+        return nil
+    }
+    
+    private func entity(by id: String) -> Entity? {
+        guard let index = entityIndex(by: id) else { return nil }
+        return entities[index]
+    }
+    
+    private func addPriceToEnitity(_ price: Double, entityId: String) {
+        guard let index = entityIndex(by: entityId) else { return }
+        entities[index].sum += price
+    }
+    
+    func addProductViewController(_ viewController: AddProductViewController, didCreate product: Product) {
+        navigationController?.popViewController(animated: true)
+        products.append(product)
+        
+        addPriceToEnitity(product.price, entityId: product.entityId)
+        board.addPrice(product.price, entityId: product.entityId)
+        
+        tableView.reloadData()
     }
 }
